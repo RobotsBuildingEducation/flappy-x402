@@ -59,6 +59,7 @@ npm install
 # PATREON_CLIENT_ID=your_patreon_client_id
 # PATREON_CLIENT_SECRET=your_patreon_client_secret
 # PATREON_REDIRECT_URI=http://localhost:3001/api/auth/patreon/callback
+# PATREON_USER_AGENT=Flappy x402 - Game Server
 
 npm run dev
 ```

@@ -1,7 +1,11 @@
 export const PATREON_AUTH_URL = "https://www.patreon.com/oauth2/authorize";
 export const PATREON_TOKEN_URL = "https://www.patreon.com/api/oauth2/token";
 export const PATREON_IDENTITY_URL =
-  "https://www.patreon.com/api/oauth2/v2/identity?include=email";
+  "https://www.patreon.com/api/oauth2/v2/identity?fields%5Buser%5D=full_name,email,image_url,thumb_url";
+
+// User-Agent required by Patreon API docs
+export const PATREON_USER_AGENT =
+  process.env.PATREON_USER_AGENT || "Flappy x402 - Game Server";
 
 /**
  * Generate the Patreon OAuth authorization URL for the user to approve access.
@@ -30,7 +34,10 @@ export async function getPatreonAccessToken(code: string) {
 
   const res = await fetch(PATREON_TOKEN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": PATREON_USER_AGENT,
+    },
     body: params,
   });
 
@@ -59,7 +66,10 @@ export async function refreshPatreonAccessToken(refreshToken: string) {
 
   const res = await fetch(PATREON_TOKEN_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": PATREON_USER_AGENT,
+    },
     body: params,
   });
 
@@ -83,6 +93,7 @@ export async function getPatreonUserInfo(token: string) {
   const res = await fetch(PATREON_IDENTITY_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "User-Agent": PATREON_USER_AGENT,
     },
   });
 

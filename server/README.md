@@ -74,3 +74,4 @@ npm run dev
 - `PATREON_CLIENT_ID` - Patreon OAuth client ID
 - `PATREON_CLIENT_SECRET` - Patreon OAuth client secret
 - `PATREON_REDIRECT_URI` - OAuth redirect URI used for Patreon authentication
+- `PATREON_USER_AGENT` - Custom User-Agent string sent to Patreon API
