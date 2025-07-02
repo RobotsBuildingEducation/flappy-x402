@@ -4,6 +4,12 @@ import { serve } from "@hono/node-server";
 import { cors } from "hono/cors";
 import { paymentMiddleware, Network, Resource } from "x402-hono";
 import { v4 as uuidv4 } from "uuid";
+import crypto from "node:crypto";
+import {
+  getPatreonAuthUrl,
+  getPatreonAccessToken,
+  getPatreonUserInfo,
+} from "./patreon";
 
 config();
 
@@ -19,6 +25,9 @@ const payTo = process.env.ADDRESS as `0x${string}`;
 const network = (process.env.NETWORK as Network) || "base-sepolia";
 const port = parseInt(process.env.PORT || "3001");
 const gamePrice = process.env.GAME_PRICE || "0.001";
+const patreonClientId = process.env.PATREON_CLIENT_ID || "";
+const patreonClientSecret = process.env.PATREON_CLIENT_SECRET || "";
+const patreonRedirectUri = process.env.PATREON_REDIRECT_URI || "";
 
 if (!payTo || payTo === "0x_YOUR_WALLET_ADDRESS_HERE") {
   console.error("Please set your wallet ADDRESS in the .env file");
@@ -86,6 +95,38 @@ app.use(
     }
   )
 );
+
+// Patreon OAuth endpoints
+app.get("/api/auth/patreon/login", (c) => {
+  const state = crypto.randomUUID();
+  const authUrl = getPatreonAuthUrl(state);
+  return c.redirect(authUrl);
+});
+
+app.get("/api/auth/patreon/callback", async (c) => {
+  const code = c.req.query("code");
+  if (!code) {
+    return c.text("Missing code", 400);
+  }
+
+  try {
+    const tokenData = await getPatreonAccessToken(code);
+    const user = await getPatreonUserInfo(tokenData.access_token);
+
+    const html = `<!DOCTYPE html><html><body><script>
+      window.opener?.postMessage({
+        type: 'patreon-auth',
+        token: ${JSON.stringify(tokenData)},
+        user: ${JSON.stringify(user)}
+      }, '*');
+      window.close();
+    </script></body></html>`;
+    return c.html(html);
+  } catch (err) {
+    console.error("Patreon OAuth failed", err);
+    return c.text("OAuth error", 500);
+  }
+});
 
 // Health check endpoint (free)
 app.get("/api/health", (c) => {

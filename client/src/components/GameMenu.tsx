@@ -1,6 +1,8 @@
 import React from "react";
 import type { PaymentStatus } from "../services/x402Client";
 import { WalletConnect } from "./WalletConnect";
+import { PatreonLogin } from "./PatreonLogin";
+import { PlayerInfo } from "./PlayerInfo";
 import { useWallet } from "../contexts/WalletContext";
 
 interface GameMenuProps {
@@ -49,8 +51,9 @@ export function GameMenu({
 
         {/* Wallet Connection Status - only show if not in dev mode */}
         {!devMode && (
-          <div className="mb-8">
+          <div className="mb-8 space-y-4">
             <WalletConnect />
+            <PatreonLogin />
           </div>
         )}
 
@@ -205,7 +208,7 @@ export function GameMenu({
 
         {/* Player Info */}
         <div className="absolute top-8 left-8">
-          <div className="text-cyan-400 pixel-font-xs"></div>
+          <PlayerInfo />
         </div>
       </div>
 
