@@ -20,7 +20,7 @@ function App() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [payToWinError, setPayToWinError] = useState<string | null>(null);
   const [isPayToWinLoading, setIsPayToWinLoading] = useState(false);
-  
+
   const {
     session,
     paymentStatus,
@@ -38,11 +38,14 @@ function App() {
 
   // Fetch server info on mount
   useEffect(() => {
-    gameAPI.getHealth()
+    gameAPI
+      .getHealth()
       .then(setServerInfo)
       .catch((err) => {
         console.error("Server connection failed:", err);
-        setConnectionError("Cannot connect to server. Please ensure the server is running on port 3001.");
+        setConnectionError(
+          "Cannot connect to server. Please ensure the server is running on port 3001."
+        );
       });
   }, []);
 
@@ -71,15 +74,15 @@ function App() {
   const handlePayToWin = async () => {
     setIsPayToWinLoading(true);
     setPayToWinError(null);
-    
+
     try {
       const newScore = await continueGame(lastScore);
-      
+
       if (newScore !== null) {
         // Payment successful! Show confetti and continue game
         setShowConfetti(true);
         setContinueScore(newScore);
-        
+
         // Wait for confetti animation then transition to playing
         setTimeout(() => {
           setShowConfetti(false);
@@ -96,10 +99,21 @@ function App() {
 
   // Start game when session is created
   useEffect(() => {
-    console.log("Session state check:", { session, paymentStatus, hasActiveGame, gameState, continueScore });
-    
+    console.log("Session state check:", {
+      session,
+      paymentStatus,
+      hasActiveGame,
+      gameState,
+      continueScore,
+    });
+
     // Only transition to playing if we're not already in game over state
-    if (session && paymentStatus === "success" && hasActiveGame && gameState === "menu") {
+    if (
+      session &&
+      paymentStatus === "success" &&
+      hasActiveGame &&
+      gameState === "menu"
+    ) {
       // Small delay to ensure UI updates properly
       setTimeout(() => {
         // If continueScore is 0, this is a normal game, not pay-to-win
@@ -119,7 +133,7 @@ function App() {
     setLastScore(score);
     setGameState("gameOver");
     // Don't reset continue score here - only reset when starting a NEW game
-    
+
     if (session && hasActiveGame) {
       try {
         await submitScore(score);
@@ -146,17 +160,18 @@ function App() {
   };
 
   // Show setup guide if there's a connection error or configuration issue
-  const showSetupGuide = connectionError || (error && (
-    error.includes("Cannot connect to server") || 
-    error.includes("No wallet configured") ||
-    error.includes("Please set VITE_PRIVATE_KEY")
-  ));
+  const showSetupGuide =
+    connectionError ||
+    (error &&
+      (error.includes("Cannot connect to server") ||
+        error.includes("No wallet configured") ||
+        error.includes("Please set VITE_PRIVATE_KEY")));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-900 via-purple-800 to-purple-900 flex items-center justify-center p-4">
       {/* Dev Mode Toggle */}
       <DevModeToggle enabled={devMode} onToggle={handleDevModeToggle} />
-      
+
       {/* Arcade Cabinet Container */}
       <div className="arcade-cabinet w-full max-w-5xl p-8 bg-gray-900">
         {/* Main Screen Area */}
@@ -165,7 +180,9 @@ function App() {
             <SetupGuide error={connectionError || error} />
           ) : !serverInfo ? (
             <div className="arcade-screen min-h-[600px] flex items-center justify-center">
-              <p className="text-green-400 pixel-font animate-pulse">BOOTING...</p>
+              <p className="text-green-400 pixel-font animate-pulse">
+                BOOTING...
+              </p>
             </div>
           ) : (
             <>
@@ -189,19 +206,25 @@ function App() {
                     {/* Game HUD */}
                     <div className="absolute top-0 left-0 right-0 bg-black/80 p-4 flex justify-between items-center">
                       <div>
-                        <p className="text-green-400 pixel-font-xs mb-1">CREDIT</p>
-                        <p className="text-green-400 neon-text pixel-font text-lg">{credits}</p>
+                        <p className="text-green-400 pixel-font-xs mb-1">
+                          CREDIT
+                        </p>
+                        <p className="text-green-400 neon-text pixel-font text-lg">
+                          {credits}
+                        </p>
                       </div>
                       <div className="text-center">
                         <p className="text-yellow-400 pixel-font-xs animate-pulse">
-                          {continueScore > 0 ? 'PAY TO WIN MODE' : 'PLAYING'}
+                          {continueScore > 0 ? "PAY TO WIN MODE" : "PLAYING"}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-cyan-400 pixel-font-xs">{serverInfo.network}</p>
+                        <p className="text-cyan-400 pixel-font-xs">
+                          {serverInfo.network}
+                        </p>
                       </div>
                     </div>
-                    
+
                     {/* Game Canvas */}
                     <div className="flex justify-center pt-20">
                       <FlappyBird
@@ -237,17 +260,17 @@ function App() {
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
               <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
-            
+
             {serverInfo && (
               <div className="text-gray-400 pixel-font-xs">
-                {devMode ? 'DEV MODE' : 'OWNER WALLET: '}
+                {devMode ? "DEV MODE" : "OWNER WALLET: "}
                 {serverInfo.payTo.slice(0, 6)}...{serverInfo.payTo.slice(-4)}
               </div>
             )}
           </div>
         </div>
       </div>
-      
+
       {/* Confetti Effect */}
       {showConfetti && <Confetti />}
     </div>
