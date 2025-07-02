@@ -15,40 +15,43 @@ export interface PatreonAuthResult {
  * Open a popup window to begin Patreon OAuth login. Resolves with token
  * and user info when authentication completes.
  */
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+
 export function loginWithPatreon(): Promise<PatreonAuthResult> {
   const width = 600;
   const height = 700;
   const left = window.screenX + (window.outerWidth - width) / 2;
   const top = window.screenY + (window.outerHeight - height) / 2;
   const popup = window.open(
-    '/api/auth/patreon/login',
-    'patreon-oauth',
-    `width=${width},height=${height},left=${left},top=${top}`
+    `${API_BASE_URL}/api/auth/patreon/login`,
+    "patreon-oauth",
+    `width=${width},height=${height},left=${left},top=${top}`,
   );
 
   if (!popup) {
-    return Promise.reject(new Error('Failed to open login popup'));
+    return Promise.reject(new Error("Failed to open login popup"));
   }
 
   return new Promise((resolve, reject) => {
     const timer = setInterval(() => {
       if (popup.closed) {
         clearInterval(timer);
-        reject(new Error('Popup closed by user'));
+        reject(new Error("Popup closed by user"));
       }
     }, 500);
 
     function handleMessage(event: MessageEvent) {
       if (event.source !== popup) return;
       const data = event.data;
-      if (data?.type === 'patreon-auth') {
+      if (data?.type === "patreon-auth") {
         clearInterval(timer);
-        window.removeEventListener('message', handleMessage);
+        window.removeEventListener("message", handleMessage);
         popup.close();
         resolve({ token: data.token, user: data.user });
       }
     }
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
   });
 }
