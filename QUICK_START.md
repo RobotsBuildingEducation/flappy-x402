@@ -61,6 +61,7 @@ npm run dev
 2. Click "Play Game"
 3. Approve the $0.001 USDC transaction
 4. Start playing!
+5. Optionally, click "Deposit $1" to preload 1000 credits
 
 ## Troubleshooting
 

@@ -14,6 +14,7 @@ Flappy x402 recreates the classic arcade experience where you "insert coins" to 
 
 - 🕹️ **Authentic Arcade Experience**: Complete with pixel art, CRT effects, and retro design
 - 🪙 **One Coin = One Game**: Pay $0.001 USDC per game, just like classic arcades
+- 💰 **Deposit Mode**: Prepay $1.00 to receive 1000 game credits
 - 🔐 **x402 Payment Integration**: Seamless blockchain payments
 - ⚡ **Instant Verification**: Start playing immediately after payment
 - 🎯 **Pure Gameplay**: Play until you crash, then insert another coin
@@ -74,6 +75,7 @@ npm run dev
 4. **Play the game:**
    - Open http://localhost:5173
    - Click "INSERT COIN" to pay $0.001 USDC
+   - Or click "DEPOSIT $1" to load 1000 credits
    - Press SPACE or click to fly!
    - When you crash, insert another coin to play again
 
@@ -90,10 +92,11 @@ No timers, no sessions - just pure arcade gameplay!
 ## 💰 How x402 Works
 
 1. **Insert Coin**: Click the coin slot button
-2. **Payment Request**: Server returns x402 payment requirements
-3. **Sign Transaction**: Approve $0.001 USDC transfer
-4. **Verification**: Server verifies with x402 facilitator
-5. **Game On**: Play until game over!
+2. **Deposit**: Optionally deposit $1 for 1000 credits
+3. **Payment Request**: Server returns x402 payment requirements
+4. **Sign Transaction**: Approve $0.001 USDC transfer
+5. **Verification**: Server verifies with x402 facilitator
+6. **Game On**: Play until game over!
 
 ## 🔧 Technical Stack
 

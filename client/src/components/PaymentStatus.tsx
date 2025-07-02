@@ -7,6 +7,7 @@ interface PaymentStatusProps {
   onPayToWin?: () => void;
   isPayToWinLoading?: boolean;
   payToWinError?: string | null;
+  credits?: number;
 }
 
 export function PaymentStatus({ 
@@ -15,7 +16,8 @@ export function PaymentStatus({
   onBackToMenu,
   onPayToWin,
   isPayToWinLoading = false,
-  payToWinError = null
+  payToWinError = null,
+  credits = 0
 }: PaymentStatusProps) {
   // Format score with leading zeros
   const formattedScore = score.toString().padStart(6, '0');
@@ -134,7 +136,7 @@ export function PaymentStatus({
         {/* Decorative Elements */}
         <div className="absolute top-8 left-8">
           <div className="text-cyan-400 pixel-font-xs">
-            CREDITS: 0
+            CREDITS: {credits}
           </div>
         </div>
 
