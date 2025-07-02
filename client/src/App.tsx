@@ -27,7 +27,10 @@ function App() {
     error,
     isLoading,
     hasActiveGame,
+    credits,
+    depositId,
     createSession,
+    deposit,
     continueGame,
     submitScore,
     resetSession,
@@ -58,6 +61,10 @@ function App() {
     console.log("Insert coin clicked");
     setContinueScore(0); // Reset for new games
     await createSession();
+  };
+
+  const handleDepositClick = async () => {
+    await deposit();
   };
 
   // Handle pay to win
@@ -165,11 +172,13 @@ function App() {
               {gameState === "menu" && (
                 <GameMenu
                   onPlayClick={handlePlayClick}
+                  onDepositClick={handleDepositClick}
                   paymentStatus={paymentStatus}
                   error={error}
                   isLoading={isLoading}
                   gamePrice={serverInfo.gamePrice || "$0.001"}
                   hasActiveGame={hasActiveGame}
+                  credits={credits}
                   devMode={devMode}
                 />
               )}
@@ -181,7 +190,7 @@ function App() {
                     <div className="absolute top-0 left-0 right-0 bg-black/80 p-4 flex justify-between items-center">
                       <div>
                         <p className="text-green-400 pixel-font-xs mb-1">CREDIT</p>
-                        <p className="text-green-400 neon-text pixel-font text-lg">1</p>
+                        <p className="text-green-400 neon-text pixel-font text-lg">{credits}</p>
                       </div>
                       <div className="text-center">
                         <p className="text-yellow-400 pixel-font-xs animate-pulse">
@@ -213,6 +222,7 @@ function App() {
                   onPayToWin={handlePayToWin}
                   isPayToWinLoading={isPayToWinLoading}
                   payToWinError={payToWinError}
+                  credits={credits}
                 />
               )}
             </>

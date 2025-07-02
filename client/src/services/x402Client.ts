@@ -79,6 +79,23 @@ export const gameAPI = {
     return response.data;
   },
 
+  // Deposit $1 for credits
+  depositCredits: async () => {
+    console.log("💰 Depositing $1 for credits...");
+    if (!currentWalletAddress) {
+      throw new Error("No wallet connected. Please connect your wallet.");
+    }
+
+    const response = await apiClient.post("/api/deposit");
+    return response.data as { depositId: string; credits: number };
+  },
+
+  // Create a new game session using deposit credits
+  createSessionWithCredit: async (depositId: string) => {
+    const response = await apiClient.post("/api/game/session/credit", { depositId });
+    return response.data as { sessionId: string; creditsRemaining: number };
+  },
+
   // Create a new game session (requires payment)
   createSession: async () => {
     console.log("🎮 Creating game session...");
@@ -203,4 +220,9 @@ export type PaymentStatus = "idle" | "processing" | "success" | "error";
 export interface GameSession {
   sessionId: string;
   message: string;
+}
+
+export interface DepositInfo {
+  depositId: string;
+  credits: number;
 }

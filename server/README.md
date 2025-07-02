@@ -43,6 +43,8 @@ npm run dev
 ### Paid Endpoints (x402)
 
 - `POST /api/game/session` - Create a new game session ($0.001 USDC per game)
+- `POST /api/deposit` - Deposit $1.00 for 1000 credits
+- `POST /api/game/session/credit` - Start a session using deposit credits
 
 ## How It Works
 

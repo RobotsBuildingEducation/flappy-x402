@@ -9,7 +9,10 @@ interface UseGameSessionReturn {
   error: string | null;
   isLoading: boolean;
   hasActiveGame: boolean;
+  credits: number;
+  depositId: string | null;
   createSession: () => Promise<void>;
+  deposit: () => Promise<void>;
   continueGame: (score: number) => Promise<number | null>;
   submitScore: (score: number) => Promise<void>;
   resetSession: () => void;
@@ -21,6 +24,8 @@ export function useGameSession(): UseGameSessionReturn {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasActiveGame, setHasActiveGame] = useState(false);
+  const [credits, setCredits] = useState(0);
+  const [depositId, setDepositId] = useState<string | null>(null);
   
   const { isConnected, walletClient } = useWallet();
 
@@ -43,7 +48,14 @@ export function useGameSession(): UseGameSessionReturn {
       // Ensure API client has the latest wallet
       updateApiClientWithWallet(walletClient);
 
-      const newSession = await gameAPI.createSession();
+      let newSession;
+      if (depositId && credits > 0) {
+        const resp = await gameAPI.createSessionWithCredit(depositId);
+        setCredits(resp.creditsRemaining);
+        newSession = { sessionId: resp.sessionId, message: "CREDIT USED" };
+      } else {
+        newSession = await gameAPI.createSession();
+      }
       
       setSession(newSession);
       setPaymentStatus("success");
@@ -71,6 +83,32 @@ export function useGameSession(): UseGameSessionReturn {
       }
       
       console.error("Session creation error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isConnected, walletClient]);
+
+  const deposit = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      setPaymentStatus("processing");
+
+      if (!isConnected || !walletClient) {
+        throw new Error("Please connect your wallet to deposit");
+      }
+
+      updateApiClientWithWallet(walletClient);
+
+      const info = await gameAPI.depositCredits();
+
+      setDepositId(info.depositId);
+      setCredits(info.credits);
+      setPaymentStatus("success");
+    } catch (err: any) {
+      setPaymentStatus("error");
+      setError(err.message || "Failed to deposit");
+      console.error("Deposit error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -170,7 +208,10 @@ export function useGameSession(): UseGameSessionReturn {
     error,
     isLoading,
     hasActiveGame,
+    credits,
+    depositId,
     createSession,
+    deposit,
     continueGame,
     submitScore,
     resetSession,

@@ -5,21 +5,25 @@ import { useWallet } from "../contexts/WalletContext";
 
 interface GameMenuProps {
   onPlayClick: () => void;
+  onDepositClick: () => void;
   paymentStatus: PaymentStatus;
   error: string | null;
   isLoading: boolean;
   gamePrice: string;
   hasActiveGame: boolean;
+  credits: number;
   devMode?: boolean;
 }
 
 export function GameMenu({
   onPlayClick,
+  onDepositClick,
   paymentStatus,
   error,
   isLoading,
   gamePrice,
   hasActiveGame,
+  credits,
   devMode = false,
 }: GameMenuProps) {
   const { isConnected } = useWallet();
@@ -67,19 +71,18 @@ export function GameMenu({
             <div className="mb-12">
               {hasActiveGame ? (
                 <div className="text-center">
-                  <div className="text-green-400 pixel-font text-lg mb-4 tracking-wide">CREDIT: 1</div>
-                  <div className="text-yellow-400 pixel-font-xs blink">
-                    PRESS START
-                  </div>
+                  <div className="text-green-400 pixel-font text-lg mb-4 tracking-wide">CREDIT: {credits > 0 ? credits : 1}</div>
+                  <div className="text-yellow-400 pixel-font-xs blink">PRESS START</div>
+                </div>
+              ) : credits > 0 ? (
+                <div className="text-center">
+                  <div className="text-green-400 pixel-font text-base mb-4 tracking-wide">CREDITS: {credits}</div>
+                  <div className="text-yellow-400 pixel-font-xs">PRESS PLAY</div>
                 </div>
               ) : (
                 <div className="text-center">
-                  <div className="text-red-400 pixel-font text-base mb-4 blink tracking-wide">
-                    INSERT COIN
-                  </div>
-                  <div className="text-white pixel-font-xs">
-                    {gamePrice} USDC PER GAME
-                  </div>
+                  <div className="text-red-400 pixel-font text-base mb-4 blink tracking-wide">INSERT COIN</div>
+                  <div className="text-white pixel-font-xs">{gamePrice} USDC PER GAME</div>
                 </div>
               )}
             </div>
@@ -122,6 +125,17 @@ export function GameMenu({
                   </div>
                 </div>
               </button>
+              {!hasActiveGame && credits === 0 && (
+                <div className="mt-4 text-center">
+                  <button
+                    onClick={onDepositClick}
+                    disabled={isLoading}
+                    className="arcade-button px-6 py-3 text-white"
+                  >
+                    DEPOSIT $1
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Status Messages */}

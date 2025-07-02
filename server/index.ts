@@ -53,6 +53,16 @@ const gameSessions = new Map<
   }
 >();
 
+// Store deposit credits
+const deposits = new Map<
+  string,
+  {
+    depositId: string;
+    credits: number;
+    paymentId?: string;
+  }
+>();
+
 // Configure x402 payment middleware
 app.use(
   paymentMiddleware(
@@ -64,6 +74,10 @@ app.use(
       },
       "/api/game/continue": {
         price: "$1.00", // Pay to win price!
+        network,
+      },
+      "/api/deposit": {
+        price: "$1.00",
         network,
       },
     },
@@ -92,6 +106,33 @@ app.get("/api/test", (c) => {
   });
 });
 
+// Deposit credits (requires $1 payment)
+app.post("/api/deposit", (c) => {
+  const depositId = uuidv4();
+
+  const deposit = {
+    depositId,
+    credits: 1000, // $1.00 worth of games at $0.001 each
+    paymentId: c.req.header("x-payment-id"),
+  };
+
+  deposits.set(depositId, deposit);
+
+  return c.json({ depositId, credits: deposit.credits });
+});
+
+// Get deposit status
+app.get("/api/deposit/:depositId", (c) => {
+  const depositId = c.req.param("depositId");
+  const deposit = deposits.get(depositId);
+
+  if (!deposit) {
+    return c.json({ error: "Deposit not found" }, 404);
+  }
+
+  return c.json({ depositId, credits: deposit.credits });
+});
+
 // Create a new game session (requires payment)
 app.post("/api/game/session", (c) => {
   const sessionId = uuidv4();
@@ -110,6 +151,32 @@ app.post("/api/game/session", (c) => {
     sessionId,
     message: "Payment accepted! Press SPACE to start your game.",
   });
+});
+
+// Create a new game session using deposit credits
+app.post("/api/game/session/credit", async (c) => {
+  const body = await c.req.json();
+  const { depositId } = body;
+
+  const deposit = deposits.get(depositId);
+  if (!deposit || deposit.credits <= 0) {
+    return c.json({ error: "No credits available" }, 400);
+  }
+
+  deposit.credits -= 1;
+
+  const sessionId = uuidv4();
+  const now = new Date();
+
+  const session = {
+    sessionId,
+    createdAt: now,
+    used: false,
+  };
+
+  gameSessions.set(sessionId, session);
+
+  return c.json({ sessionId, creditsRemaining: deposit.credits });
 });
 
 // Validate a game session (free)
