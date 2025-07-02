@@ -13,7 +13,8 @@ config();
 // ADDRESS=0x_YOUR_WALLET_ADDRESS_HERE
 // PORT=3001
 
-const facilitatorUrl = process.env.FACILITATOR_URL as Resource || "https://x402.org/facilitator";
+const facilitatorUrl =
+  (process.env.FACILITATOR_URL as Resource) || "https://x402.org/facilitator";
 const payTo = process.env.ADDRESS as `0x${string}`;
 const network = (process.env.NETWORK as Network) || "base-sepolia";
 const port = parseInt(process.env.PORT || "3001");
@@ -32,19 +33,25 @@ if (!payTo || payTo === "0x_YOUR_WALLET_ADDRESS_HERE") {
 const app = new Hono();
 
 // Enable CORS for frontend
-app.use("/*", cors({
-  origin: ["http://localhost:5173", "http://localhost:3000"],
-  credentials: true,
-}));
+app.use(
+  "/*",
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    credentials: true,
+  })
+);
 
 // Store active game sessions in memory (in production, use Redis or a database)
-const gameSessions = new Map<string, {
-  sessionId: string;
-  createdAt: Date;
-  used: boolean;
-  paymentId?: string;
-  continueScore?: number; // Add score for continued games
-}>();
+const gameSessions = new Map<
+  string,
+  {
+    sessionId: string;
+    createdAt: Date;
+    used: boolean;
+    paymentId?: string;
+    continueScore?: number; // Add score for continued games
+  }
+>();
 
 // Configure x402 payment middleware
 app.use(
@@ -62,8 +69,8 @@ app.use(
     },
     {
       url: facilitatorUrl,
-    },
-  ),
+    }
+  )
 );
 
 // Health check endpoint (free)
@@ -130,7 +137,7 @@ app.post("/api/game/continue", async (c) => {
   const body = await c.req.json();
   const { score } = body;
 
-  if (typeof score !== 'number' || score < 0) {
+  if (typeof score !== "number" || score < 0) {
     return c.json({ error: "Invalid score" }, 400);
   }
 
@@ -201,4 +208,4 @@ console.log(`💵 Price per game: $${gamePrice} USDC`);
 serve({
   fetch: app.fetch,
   port,
-}); 
+});
