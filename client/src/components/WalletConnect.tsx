@@ -1,8 +1,15 @@
-import React from 'react';
-import { useWallet } from '../contexts/WalletContext';
+import React from "react";
+import { useWallet } from "../contexts/WalletContext";
 
 export function WalletConnect() {
-  const { isConnected, address, isConnecting, error, connectWallet, disconnectWallet } = useWallet();
+  const {
+    isConnected,
+    address,
+    isConnecting,
+    error,
+    connectWallet,
+    disconnectWallet,
+  } = useWallet();
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -16,7 +23,9 @@ export function WalletConnect() {
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-green-400 pixel-font-xs">CONNECTED</span>
           </div>
-          <span className="text-cyan-400 pixel-font">{formatAddress(address)}</span>
+          <span className="text-cyan-400 pixel-font">
+            {formatAddress(address)}
+          </span>
           <button
             onClick={disconnectWallet}
             className="text-red-400 hover:text-red-300 pixel-font-xs underline"
@@ -46,30 +55,30 @@ export function WalletConnect() {
           hover:scale-105
           active:scale-95
           disabled:opacity-50 disabled:cursor-not-allowed
-          ${isConnecting ? 'animate-pulse' : ''}
+          ${isConnecting ? "animate-pulse" : ""}
         `}
       >
         <span className="relative z-10">
-          {isConnecting ? 'CONNECTING...' : 'CONNECT WALLET'}
+          {isConnecting ? "CONNECTING..." : "CONNECT WALLET"}
         </span>
-        
+
         {/* Arcade button shine effect */}
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/20 rounded-lg"></div>
-        
+
         {/* Glow effect */}
         <div className="absolute -inset-1 bg-yellow-500/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
       </button>
-      
+
       {error && (
         <div className="mt-4 px-4 py-2 bg-red-900/50 border border-red-500 rounded">
           <p className="text-red-400 pixel-font-xs">{error}</p>
         </div>
       )}
-      
+
       <div className="mt-4 text-gray-400 pixel-font-xs">
         <p>CONNECT YOUR WALLET</p>
         <p className="mt-1">TO PLAY WITH USDC ON BASE SEPOLIA</p>
       </div>
     </div>
   );
-} 
+}
