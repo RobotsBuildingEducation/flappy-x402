@@ -135,7 +135,7 @@ export function GameMenu({
                       </span>
                     ) : (
                       <span className="text-white pixel-font-xs">
-                        INSERT COIN
+                        {credits > 0 ? "PLAY" : "INSERT COIN"}
                       </span>
                     )}
                   </div>

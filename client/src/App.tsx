@@ -146,11 +146,11 @@ function App() {
     }
   };
 
-  const handlePlayAgain = () => {
+  const handlePlayAgain = async () => {
     setContinueScore(0); // Reset continue score when starting fresh
     resetSession(); // Reset the session state first
     setGameState("menu");
-    // Don't immediately create a new session - let the user click insert coin
+    await createSession(); // Automatically start a new session
   };
 
   const handleBackToMenu = () => {

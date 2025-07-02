@@ -26,8 +26,22 @@ export function useGameSession(): UseGameSessionReturn {
   const [hasActiveGame, setHasActiveGame] = useState(false);
   const [credits, setCredits] = useState(0);
   const [depositId, setDepositId] = useState<string | null>(null);
-  
+
   const { isConnected, walletClient } = useWallet();
+
+  // Load deposit info from local storage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("flappy-deposit");
+    if (stored) {
+      try {
+        const info = JSON.parse(stored) as { depositId: string; credits: number };
+        if (info.depositId) setDepositId(info.depositId);
+        if (typeof info.credits === "number") setCredits(info.credits);
+      } catch (e) {
+        console.error("Failed to parse stored deposit info", e);
+      }
+    }
+  }, []);
 
   // Update API client when wallet connection changes
   useEffect(() => {
@@ -52,6 +66,10 @@ export function useGameSession(): UseGameSessionReturn {
       if (depositId && credits > 0) {
         const resp = await gameAPI.createSessionWithCredit(depositId);
         setCredits(resp.creditsRemaining);
+        localStorage.setItem(
+          "flappy-deposit",
+          JSON.stringify({ depositId, credits: resp.creditsRemaining })
+        );
         newSession = { sessionId: resp.sessionId, message: "CREDIT USED" };
       } else {
         newSession = await gameAPI.createSession();
@@ -104,6 +122,10 @@ export function useGameSession(): UseGameSessionReturn {
 
       setDepositId(info.depositId);
       setCredits(info.credits);
+      localStorage.setItem(
+        "flappy-deposit",
+        JSON.stringify({ depositId: info.depositId, credits: info.credits })
+      );
       setPaymentStatus("success");
     } catch (err: any) {
       setPaymentStatus("error");

@@ -83,14 +83,23 @@ export function PaymentStatus({
           </div>
         )}
 
-        {/* Insert Coin Prompt */}
+        {/* Insert Coin or Play Again Prompt */}
         <div className="mb-10 text-center">
-          <div className="text-red-400 pixel-font text-base mb-4 blink tracking-wide">
-            INSERT COIN TO CONTINUE
-          </div>
-          <div className="text-gray-400 pixel-font-xs">
-            1 CREDIT = 1 GAME
-          </div>
+          {credits > 0 ? (
+            <>
+              <div className="text-green-400 pixel-font text-base mb-4 tracking-wide">
+                PRESS PLAY TO RETRY
+              </div>
+              <div className="text-gray-400 pixel-font-xs">CREDITS REMAINING: {credits}</div>
+            </>
+          ) : (
+            <>
+              <div className="text-red-400 pixel-font text-base mb-4 blink tracking-wide">
+                INSERT COIN TO CONTINUE
+              </div>
+              <div className="text-gray-400 pixel-font-xs">1 CREDIT = 1 GAME</div>
+            </>
+          )}
         </div>
 
         {/* Action Buttons */}
@@ -102,7 +111,9 @@ export function PaymentStatus({
           >
             <div className="flex items-center gap-3">
               <span className="text-xl">🪙</span>
-              <span className="pixel-font-sm">INSERT COIN</span>
+              <span className="pixel-font-sm">
+                {credits > 0 ? "PLAY AGAIN" : "INSERT COIN"}
+              </span>
             </div>
           </button>
 
