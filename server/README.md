@@ -39,6 +39,8 @@ npm run dev
 - `GET /api/game/session/:sessionId` - Validate a game session
 - `POST /api/game/score` - Submit a game score (requires valid session)
 - `GET /api/leaderboard` - Get the game leaderboard
+- `GET /api/auth/patreon/login` - Redirect to Patreon for OAuth login
+- `GET /api/auth/patreon/callback` - Handle OAuth callback and return user info
 
 ### Paid Endpoints (x402)
 
@@ -68,4 +70,7 @@ npm run dev
 - `NETWORK` - Blockchain network (use `base-sepolia` for testing)
 - `ADDRESS` - Your wallet address to receive game payments
 - `PORT` - Server port (default: 3001)
-- `GAME_PRICE` - Price per game in USD (default: 0.001) 
+- `GAME_PRICE` - Price per game in USD (default: 0.001)
+- `PATREON_CLIENT_ID` - Patreon OAuth client ID
+- `PATREON_CLIENT_SECRET` - Patreon OAuth client secret
+- `PATREON_REDIRECT_URI` - OAuth redirect URI used for Patreon authentication

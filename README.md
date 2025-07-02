@@ -56,6 +56,9 @@ npm install
 # NETWORK=base-sepolia
 # ADDRESS=0xYOUR_WALLET_ADDRESS
 # PORT=3001
+# PATREON_CLIENT_ID=your_patreon_client_id
+# PATREON_CLIENT_SECRET=your_patreon_client_secret
+# PATREON_REDIRECT_URI=http://localhost:3001/api/auth/patreon/callback
 
 npm run dev
 ```
@@ -74,6 +77,7 @@ npm run dev
 
 4. **Play the game:**
    - Open http://localhost:5173
+   - (Optional) Click "LOGIN WITH PATREON" to fetch your profile
    - Click "INSERT COIN" to pay $0.001 USDC
    - Or click "DEPOSIT $1" to load 1000 credits
    - Press SPACE or click to fly!

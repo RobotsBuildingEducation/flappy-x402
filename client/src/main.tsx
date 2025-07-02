@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { WalletProvider } from './contexts/WalletContext.tsx'
+import { PatreonProvider } from './contexts/PatreonContext.tsx'
 import './index.css'
 
 // Show setup instructions in console
@@ -43,7 +44,9 @@ Need help? Check the README.md
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <WalletProvider>
-      <App />
+      <PatreonProvider>
+        <App />
+      </PatreonProvider>
     </WalletProvider>
   </StrictMode>,
 )
