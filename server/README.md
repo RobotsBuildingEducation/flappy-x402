@@ -68,4 +68,7 @@ npm run dev
 - `NETWORK` - Blockchain network (use `base-sepolia` for testing)
 - `ADDRESS` - Your wallet address to receive game payments
 - `PORT` - Server port (default: 3001)
-- `GAME_PRICE` - Price per game in USD (default: 0.001) 
+- `GAME_PRICE` - Price per game in USD (default: 0.001)
+- `PATREON_CLIENT_ID` - Patreon OAuth client ID
+- `PATREON_CLIENT_SECRET` - Patreon OAuth client secret
+- `PATREON_REDIRECT_URI` - OAuth redirect URI used for Patreon authentication
